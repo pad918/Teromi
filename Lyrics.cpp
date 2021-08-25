@@ -1,20 +1,21 @@
 #include "Lyrics.h"
 
 void Lyrics::calculate_timings(){
-    std::cout << "TEST\n";
-    //startTime = timings.front().start;
-    //endTime = timings.back().end;
+    start_time = words.front().start_time;
+    end_time   = words.back().end_time;
 }
 
 std::string Lyrics::render_string(float current_time){
     std::string render = "";
-    for(int i=0; i < words.size(); ++i){
-        if(timings[i].start <= current_time &&
-            timings[i].end >= current_time){
-                render += "\e[1m" + words[i] + "\e[0m ";
+
+    for(auto word : words){
+        if(word.start_time <= current_time && word.end_time >= current_time){
+            
+            //Add word and make it bold with escape characters
+            render += "\e[1m" + word.text + "\e[0m ";
         }
         else{
-            render += words[i] + " ";
+            render += word.text + " ";
         }
     }
     return render;
