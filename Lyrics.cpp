@@ -15,7 +15,7 @@ std::string Lyrics::render_string(float current_time){
             render += "\e[1m" + word.text + "\e[0m ";
         }
         else{
-            render += word.text + " ";
+            render += word.text + (word.is_part_of_word ? "" : " ");
         }
     }
     return render;

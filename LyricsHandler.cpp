@@ -4,10 +4,20 @@
 #include <sstream>
 #include <string>
 #include "TerminalRenderer.h"
-
+#define DEBUG true
+#define debug_print(a) std::cout << a << std::endl;
 
 void LyricsHandler::render(float current_time){
-    trm::draw_window("\e[1mBad Apple\e[0m " + std::to_string(current_time) + "s", lines.front().render_string(current_time));
+    std::string render_string = "";
+    
+    for(auto & line : lines){
+		if(line.start_time <= current_time && line.end_time >= current_time){
+			render_string += line.render_string(current_time) + "\n\n";
+		}
+    }
+
+    trm::draw_window("\e[1mBad Apple\e[0m " + std::to_string(current_time) + "s", render_string);
+
 }
 
 std::vector<std::string> LyricsHandler::split_string(std::string line, std::string token){
@@ -29,17 +39,41 @@ void LyricsHandler::loadLyrics(std::string file_path){
     std::ifstream infile(file_path);
     
     while(std::getline(infile, line)){
-        //TEST IF VALID LINE FIRST
         
         auto to_process = split_string(line, ">");
         Lyrics lyrics_line;
 		
-        for(auto &str : to_process){
-            str.erase(std::remove(str.begin(), str.end(), '"'), str.end());
+        for(std::string &str : to_process){
+			if(DEBUG){ debug_print(str) }
+			
             str.erase(std::remove(str.begin(), str.end(), '<'), str.end());
             str.erase(std::remove(str.begin(), str.end(), ' '), str.end());
-            auto result = split_string(str, ","); 
-            Word word(std::stof(result[1]), std::stof(result[2]), result[0], false);
+            std::string lyric_word = "";
+			bool isPartOfLongerWord = false;
+
+			for(int i = 1; str.at(i) != '"'; ++i){
+				lyric_word.push_back(str.at(i));
+			}
+
+			for(int marks=0, i=0; marks<2 && i < str.size(); ++i){
+				if(str[0]=='"'){
+					marks++;
+				}
+				str.erase(str.begin());
+			}
+			
+			// \b detection
+			if(lyric_word.size() > 2 && lyric_word.at(lyric_word.size()-1) == 'b'
+				&& lyric_word.at(lyric_word.size()-2) == '\\'){
+				
+				isPartOfLongerWord = true;
+				lyric_word.pop_back();
+				lyric_word.pop_back();
+			}
+			
+			auto result = split_string(str, ","); 
+
+            Word word(std::stof(result[1]), std::stof(result[2]), lyric_word, isPartOfLongerWord);
             lyrics_line.words.push_back(word);
         }
         lyrics_line.calculate_timings();
