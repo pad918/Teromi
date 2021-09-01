@@ -5,10 +5,15 @@
 #include <SFML/System/Time.hpp>
 #include <utility>
 #include <unistd.h>
+#include "Menu.h"
 #include "LyricsHandler.h"
 
 int main(){
 
+    //TEST
+    main_menu();
+    //END OF TEST
+    return 0;
     std::string song_path = "dark.flac";
 
     sf::Music music;

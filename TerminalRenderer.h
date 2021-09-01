@@ -8,11 +8,11 @@
 
 namespace trm{
 
-    void clear_screen(){
+    inline void clear_screen(){
         std::cout << "\033[H\033[2J\033[3J";
     }
 
-    void draw_window(std::string song_name, std::string lyrics){
+    inline void draw_window(std::string song_name, std::string lyrics){
         clear_screen();
         for(int i=0; i < 0.5f * (terminal_x-song_name.size()+2); ++i){
             std::cout << "#";

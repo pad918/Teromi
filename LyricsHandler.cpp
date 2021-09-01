@@ -1,22 +1,24 @@
 #include "LyricsHandler.h"
-#include <fstream>
-#include <iterator>
-#include <sstream>
-#include <string>
-#include "TerminalRenderer.h"
+
 #define DEBUG true
 #define debug_print(a) std::cout << a << std::endl;
 
+std::string song_name = "";
+
 void LyricsHandler::render(float current_time){
     std::string render_string = "";
-    
+    float fade_in_time = 2.5f; 
+    float fade_out_time = 0.0f; 
+
     for(auto & line : lines){
-		if(line.start_time <= current_time && line.end_time >= current_time){
-			render_string += line.render_string(current_time) + "\n\n";
+		if(line.start_time <= current_time + fade_in_time &&
+            line.end_time >= current_time - fade_out_time){
+			
+            render_string += line.render_string(current_time) + "\n\n";
 		}
     }
 
-    trm::draw_window("\e[1mBad Apple\e[0m " + std::to_string(current_time) + "s", render_string);
+    trm::draw_window("\e[1m" + song_name + "\e[0m " + std::to_string(current_time) + "s", render_string);
 
 }
 
@@ -80,5 +82,5 @@ void LyricsHandler::loadLyrics(std::string file_path){
         lines.push_back(lyrics_line);
 
     }
-
+    song_name = file_path;
 }

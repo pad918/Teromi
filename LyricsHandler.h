@@ -2,8 +2,13 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <fstream>
+#include <iterator>
+#include <sstream>
+
 #include "Lyrics.h"
 #include "Word.h"
+#include "TerminalRenderer.h"
 
 class LyricsHandler{
 public:
